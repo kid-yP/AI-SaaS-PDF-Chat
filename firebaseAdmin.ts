@@ -1,25 +1,27 @@
-import { initializeApp, getApps, App, getApp, cert } from "firebase-admin/app";
+import { initializeApp, getApps, App, getApp, cert, ServiceAccount } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+
+// Try to read from environment variable
+const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
 let app: App;
 
-try {
-  const serviceKey = require("@/service_key.json");
-  if (getApps().length === 0) {
+if (getApps().length === 0) {
+  if (serviceAccountString) {
+    // Use the service account JSON
+    const serviceAccount: ServiceAccount = JSON.parse(serviceAccountString);
     app = initializeApp({
-      credential: cert(serviceKey),
+      credential: cert(serviceAccount),
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID, // Explicitly set
     });
   } else {
-    app = getApp();
+    // Fallback: use default credentials with explicit project ID
+    app = initializeApp({
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    });
   }
-} catch (error) {
-  console.error("Failed to load service_key.json:", error);
-  // Fallback: initialize without credentials (only works on GCP)
-  if (getApps().length === 0) {
-    app = initializeApp();
-  } else {
-    app = getApp();
-  }
+} else {
+  app = getApp();
 }
 
 const adminDb = getFirestore(app);
