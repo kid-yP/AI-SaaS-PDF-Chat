@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState, useTransition } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -29,8 +29,8 @@ function Chat({ id }: { id: string }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Manual fetch
-  const fetchMessages = async () => {
+  // ✅ Manual fetch with useCallback to fix ESLint warning
+  const fetchMessages = useCallback(async () => {
     if (!user) return;
     setIsRefreshing(true);
     try {
@@ -53,7 +53,7 @@ function Chat({ id }: { id: string }) {
       setIsRefreshing(false);
       setIsLoading(false);
     }
-  };
+  }, [user, id]);
 
   // Real‑time listener
   useEffect(() => {
@@ -86,10 +86,10 @@ function Chat({ id }: { id: string }) {
     return () => unsubscribe();
   }, [user, id]);
 
-  // Initial load
+  // ✅ Initial load – now includes fetchMessages in deps
   useEffect(() => {
     if (user) fetchMessages();
-  }, [user]);
+  }, [user, fetchMessages]);
 
   // Scroll
   useEffect(() => {
@@ -132,7 +132,7 @@ function Chat({ id }: { id: string }) {
             ...filtered,
             {
               role: "ai",
-              message: "❌ An unexpected error occurred. Please try again.",
+              message: "An unexpected error occurred. Please try again.",
               createdAt: new Date(),
             },
           ];
