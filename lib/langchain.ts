@@ -192,8 +192,9 @@ export async function generateEmbeddingsInPineconeVectorStore(docId: string) {
   }
 
   const splitDocs = await generateDocs(docId);
+  // ✅ FIXED: hardcode model name instead of accessing private property
   console.log(
-    `--- Storing ${splitDocs.length} chunks in Pinecone using Cohere (${embeddings.model}) ---`
+    `--- Storing ${splitDocs.length} chunks in Pinecone using Cohere (embed-english-v3.0) ---`
   );
 
   return await PineconeStore.fromDocuments(splitDocs, embeddings as any, {
