@@ -22,7 +22,6 @@
 **Purpose:** Built as a portfolio project to demonstrate modern full-stack development skills, AI integration, and SaaS architecture.
 
 ---
-
 ## 🛠️ Tech Stack
 
 ### Frontend
