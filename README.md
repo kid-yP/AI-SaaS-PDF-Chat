@@ -1,7 +1,7 @@
 
 ---
 
-# `ChatWithPDF_README.md`
+# `ChatWithPDF`
 
 ```markdown
 # ChatWithPDF — AI SaaS PDF Q&A
